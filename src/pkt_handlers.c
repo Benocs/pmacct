@@ -671,6 +671,13 @@ void evaluate_packet_handlers()
       primitives++;
     }
 
+    if (channels_list[index].aggregation_2 & COUNT_EXPORT_PROTO_SOURCEID) {
+      if (config.acct_type == ACCT_NF) channels_list[index].phandler[primitives] = NF_sourceid_handler;
+      else if (config.acct_type == ACCT_SF) channels_list[index].phandler[primitives] = SF_sourceid_handler;
+      else primitives--;
+      primitives++;
+    }
+
     /* if cpptrs.num > 0 one or multiple custom primitives are defined */
     if (channels_list[index].plugin->cfg.cpptrs.num) {
       if (config.acct_type == ACCT_PM) {
@@ -3150,6 +3157,26 @@ void NF_version_handler(struct channels_list_entry *chptr, struct packet_ptrs *p
   pdata->primitives.export_proto_version = hdr->version;
 }
 
+void NF_sourceid_handler(struct channels_list_entry *chptr, struct packet_ptrs *pptrs, char **data)
+{
+  struct pkt_data *pdata = (struct pkt_data *) *data;
+  struct struct_header_v8 *hdr = (struct struct_header_v8 *) pptrs->f_header;
+
+  switch(hdr->version) {
+  case 10:
+    pdata->primitives.export_proto_sourceid = ntohl(((struct struct_header_ipfix *) pptrs->f_header)->source_id);
+    break;
+  case 9:
+    pdata->primitives.export_proto_sourceid = ntohl(((struct struct_header_v9 *) pptrs->f_header)->source_id);
+    break;
+  default:
+    pdata->primitives.export_proto_sourceid =
+        ((u_int8_t)((struct struct_header_v5 *) pptrs->f_header)->engine_type << 8) +
+        (u_int8_t)((struct struct_header_v5 *) pptrs->f_header)->engine_id;
+    break;
+  }
+}
+
 void NF_custom_primitives_handler(struct channels_list_entry *chptr, struct packet_ptrs *pptrs, char **data)
 {
   struct pkt_data *pdata = (struct pkt_data *) *data;
@@ -4443,6 +4470,14 @@ void SF_version_handler(struct channels_list_entry *chptr, struct packet_ptrs *p
   SFSample *sample = (SFSample *) pptrs->f_data;
 
   pdata->primitives.export_proto_version = sample->datagramVersion;
+}
+
+void SF_sourceid_handler(struct channels_list_entry *chptr, struct packet_ptrs *pptrs, char **data)
+{
+  struct pkt_data *pdata = (struct pkt_data *) *data;
+  SFSample *sample = (SFSample *) pptrs->f_data;
+
+  pdata->primitives.export_proto_sourceid = sample->agentSubId;
 }
 
 void SF_class_handler(struct channels_list_entry *chptr, struct packet_ptrs *pptrs, char **data)

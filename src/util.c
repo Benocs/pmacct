@@ -2203,6 +2203,12 @@ void *compose_json(u_int64_t wtc, u_int64_t wtc_2, u_int8_t flow_type, struct pk
     json_decref(kv);
   }
 
+  if (wtc_2 & COUNT_EXPORT_PROTO_SOURCEID) {
+    kv = json_pack("{sI}", "export_proto_sourceid", pbase->export_proto_sourceid);
+    json_object_update_missing(obj, kv);
+    json_decref(kv);
+  }
+
   /* all custom primitives printed here */
   {
     int cp_idx;

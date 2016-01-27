@@ -835,6 +835,7 @@ void P_cache_purge(struct chained_cache *queue[], int index)
 
         if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SEQNO) fprintf(f, "%-18u  ", data->export_proto_seqno);
         if (config.what_to_count_2 & COUNT_EXPORT_PROTO_VERSION) fprintf(f, "%-20u  ", data->export_proto_version);
+        if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SOURCEID) fprintf(f, "%-20u  ", data->export_proto_sourceid);
 
         /* all custom primitives printed here */
         {
@@ -1139,6 +1140,7 @@ void P_cache_purge(struct chained_cache *queue[], int index)
 
         if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SEQNO) fprintf(f, "%s%u", write_sep(sep, &count), data->export_proto_seqno);
         if (config.what_to_count_2 & COUNT_EXPORT_PROTO_VERSION) fprintf(f, "%s%u", write_sep(sep, &count), data->export_proto_version);
+        if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SOURCEID) fprintf(f, "%s%u", write_sep(sep, &count), data->export_proto_sourceid);
   
         /* all custom primitives printed here */
         {
@@ -1291,6 +1293,7 @@ void P_write_stats_header_formatted(FILE *f, int is_event)
   }
   if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SEQNO) fprintf(f, "EXPORT_PROTO_SEQNO  ");
   if (config.what_to_count_2 & COUNT_EXPORT_PROTO_VERSION) fprintf(f, "EXPORT_PROTO_VERSION  ");
+  if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SOURCEID) fprintf(f, "EXPORT_PROTO_SOURCEID  ");
 
   /* all custom primitives printed here */
   {
@@ -1391,6 +1394,7 @@ void P_write_stats_header_csv(FILE *f, int is_event)
   }
   if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SEQNO) fprintf(f, "%sEXPORT_PROTO_SEQNO", write_sep(sep, &count));
   if (config.what_to_count_2 & COUNT_EXPORT_PROTO_VERSION) fprintf(f, "%sEXPORT_PROTO_VERSION", write_sep(sep, &count));
+  if (config.what_to_count_2 & COUNT_EXPORT_PROTO_SOURCEID) fprintf(f, "%sEXPORT_PROTO_SOURCEID", write_sep(sep, &count));
 
   /* all custom primitives printed here */
   { 
